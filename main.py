@@ -8,7 +8,11 @@ import sys
 import logging
 from typing import Dict, Any
 from config import Config
-from tools import list_feeds_tool, list_articles_tool, search_articles_tool
+from tools import (
+    list_feeds_tool, list_articles_tool, search_articles_tool,
+    get_content_tool, mark_as_read_tool, summarize_article_tool,
+    analyze_articles_tool, get_stats_tool
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, stream=sys.stderr)
@@ -88,6 +92,14 @@ class MinimalMCPServer:
                         "days": {
                             "type": "integer",
                             "description": "Articles from last N days (default: 7)"
+                        },
+                        "feed_id": {
+                            "type": "string",
+                            "description": "Optional feed ID to filter articles"
+                        },
+                        "unread_only": {
+                            "type": "boolean",
+                            "description": "Only show unread articles (default: true)"
                         }
                     },
                     "required": []
@@ -106,9 +118,85 @@ class MinimalMCPServer:
                         "days": {
                             "type": "integer",
                             "description": "Search within the last N days (default: 7)"
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "description": "Number of articles to return (default: 50)"
                         }
                     },
                     "required": ["query"]
+                }
+            },
+            {
+                "name": "inoreader_get_content",
+                "description": "Get full content of a specific article",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "article_id": {
+                            "type": "string",
+                            "description": "Article ID to get content for"
+                        }
+                    },
+                    "required": ["article_id"]
+                }
+            },
+            {
+                "name": "inoreader_mark_as_read",
+                "description": "Mark articles as read",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "article_ids": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of article IDs to mark as read"
+                        }
+                    },
+                    "required": ["article_ids"]
+                }
+            },
+            {
+                "name": "inoreader_summarize",
+                "description": "Generate a summary of an article",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "article_id": {
+                            "type": "string",
+                            "description": "Article ID to summarize"
+                        }
+                    },
+                    "required": ["article_id"]
+                }
+            },
+            {
+                "name": "inoreader_analyze",
+                "description": "Analyze multiple articles for trends, sentiment, or keywords",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "article_ids": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of article IDs to analyze"
+                        },
+                        "analysis_type": {
+                            "type": "string",
+                            "enum": ["summary", "trends", "sentiment", "keywords"],
+                            "description": "Type of analysis to perform"
+                        }
+                    },
+                    "required": ["article_ids", "analysis_type"]
+                }
+            },
+            {
+                "name": "inoreader_stats",
+                "description": "Get statistics about unread articles",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
                 }
             }
         ]
@@ -133,14 +221,36 @@ class MinimalMCPServer:
             if tool_name == "inoreader_list_feeds":
                 result = await list_feeds_tool()
             elif tool_name == "inoreader_list_articles":
-                # Use safer defaults
                 limit = arguments.get("limit", 20)
                 days = arguments.get("days", 7)
-                result = await list_articles_tool(limit=limit, days=days)
+                feed_id = arguments.get("feed_id")
+                unread_only = arguments.get("unread_only", True)
+                result = await list_articles_tool(
+                    feed_id=feed_id, 
+                    limit=limit, 
+                    unread_only=unread_only, 
+                    days=days
+                )
             elif tool_name == "inoreader_search":
                 query = arguments.get("query", "")
                 days = arguments.get("days", 7)
-                result = await search_articles_tool(query=query, days=days)
+                limit = arguments.get("limit", 50)
+                result = await search_articles_tool(query=query, limit=limit, days=days)
+            elif tool_name == "inoreader_get_content":
+                article_id = arguments.get("article_id", "")
+                result = await get_content_tool(article_id)
+            elif tool_name == "inoreader_mark_as_read":
+                article_ids = arguments.get("article_ids", [])
+                result = await mark_as_read_tool(article_ids)
+            elif tool_name == "inoreader_summarize":
+                article_id = arguments.get("article_id", "")
+                result = await summarize_article_tool(article_id)
+            elif tool_name == "inoreader_analyze":
+                article_ids = arguments.get("article_ids", [])
+                analysis_type = arguments.get("analysis_type", "summary")
+                result = await analyze_articles_tool(article_ids, analysis_type)
+            elif tool_name == "inoreader_stats":
+                result = await get_stats_tool()
             else:
                 raise ValueError(f"Unknown tool: {tool_name}")
                 

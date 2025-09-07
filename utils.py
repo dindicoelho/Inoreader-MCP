@@ -63,8 +63,11 @@ def format_article_list(articles: List[Dict]) -> str:
         result.append(f"{i}. {status} {article['title']}")
         result.append(f"   Feed: {article['feed_title']}")
         result.append(f"   Date: {article['published_date']}")
+        # Always show URL, make it more prominent
         if article['url']:
-            result.append(f"   URL: {article['url']}")
+            result.append(f"   🔗 Link: {article['url']}")
+        else:
+            result.append(f"   🔗 Link: No URL available")
         result.append("")
         
     return "\n".join(result)

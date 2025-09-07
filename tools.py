@@ -113,8 +113,11 @@ async def get_content_tool(article_id: str) -> str:
             content += f"Feed: {article['feed_title']}\n"
             content += f"Date: {article['published_date']}\n"
             
+            # Make URL more prominent
             if article['url']:
-                content += f"URL: {article['url']}\n"
+                content += f"🔗 **Link**: {article['url']}\n"
+            else:
+                content += f"🔗 **Link**: No URL available\n"
                 
             content += f"Status: {'Read' if article['is_read'] else 'Unread'}\n"
             
@@ -277,6 +280,8 @@ async def _analyze_summary(articles: List[Dict]) -> str:
         result += f"{i}. **{article['title']}**\n"
         result += f"   - Feed: {article['feed_title']}\n"
         result += f"   - Date: {article['published_date']}\n"
+        if article['url']:
+            result += f"   - 🔗 Link: {article['url']}\n"
         if article['summary']:
             summary_preview = article['summary'][:150] + "..." if len(article['summary']) > 150 else article['summary']
             result += f"   - Preview: {summary_preview}\n"

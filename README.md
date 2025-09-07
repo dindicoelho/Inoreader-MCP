@@ -22,7 +22,28 @@ An MCP (Model Context Protocol) server that integrates Inoreader with Claude Des
 
 ## Installation
 
-### 1. Clone the repository
+### 🚀 Auto-Installer (Recommended)
+
+**One command installs everything:**
+```bash
+python3 install_inoreader_mcp.py
+```
+
+The auto-installer will:
+- ✅ Install all Python dependencies
+- ✅ Prompt for your Inoreader credentials  
+- ✅ Configure Claude Desktop automatically
+- ✅ Leave everything ready to use!
+
+**Windows users:** Double-click `install.bat`
+
+### 📦 Drag & Drop Installation
+
+**Try dragging `inoreader-mcp.dxt` onto Claude Desktop** (experimental - may not work on all versions)
+
+### 🛠️ Manual Installation
+
+1. Clone the repository
 ```bash
 git clone <repository-url>
 cd inoreader_mcp

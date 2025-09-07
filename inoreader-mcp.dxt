@@ -1,0 +1,138 @@
+{
+  "name": "inoreader-mcp",
+  "version": "1.0.1",
+  "description": "An MCP server that integrates Inoreader with Claude Desktop for intelligent RSS feed management and analysis",
+  "author": "Inoreader MCP Contributors",
+  "license": "MIT",
+  "mcp_version": "2024-11-05",
+  "icon": "📰",
+  "server": {
+    "command": "python3",
+    "args": ["${SERVER_PATH}/main.py"],
+    "env": {
+      "INOREADER_APP_ID": "${INOREADER_APP_ID}",
+      "INOREADER_APP_KEY": "${INOREADER_APP_KEY}",
+      "INOREADER_USERNAME": "${INOREADER_USERNAME}",
+      "INOREADER_PASSWORD": "${INOREADER_PASSWORD}"
+    }
+  },
+  "setup": {
+    "instructions": [
+      "1. Visit https://www.inoreader.com/developers/ to obtain API credentials",
+      "2. Create a new application (choose 'Web Application' type)",
+      "3. Copy your App ID and App Key from the developer dashboard",
+      "4. When prompted during installation, enter your credentials",
+      "5. The server will be automatically configured in Claude Desktop"
+    ],
+    "required_fields": [
+      {
+        "name": "INOREADER_APP_ID",
+        "description": "Your Inoreader App ID (from developer dashboard)",
+        "type": "string",
+        "required": true,
+        "placeholder": "1000000123"
+      },
+      {
+        "name": "INOREADER_APP_KEY",
+        "description": "Your Inoreader App Key (from developer dashboard)",
+        "type": "string",
+        "required": true,
+        "placeholder": "your-app-key-here"
+      },
+      {
+        "name": "INOREADER_USERNAME",
+        "description": "Your Inoreader username (email address)",
+        "type": "string",
+        "required": true,
+        "placeholder": "your-email@example.com"
+      },
+      {
+        "name": "INOREADER_PASSWORD",
+        "description": "Your Inoreader password",
+        "type": "password",
+        "required": true
+      }
+    ],
+    "post_install": [
+      "Installation complete! You can now use Inoreader commands in Claude Desktop.",
+      "Try asking Claude: 'List my unread articles' or 'Search for AI news from the last 3 days'",
+      "🚀 TIP: For easier installation, use the auto-installer: python3 install_inoreader_mcp.py"
+    ]
+  },
+  "files": [
+    "main.py",
+    "inoreader_client.py",
+    "tools.py",
+    "config.py",
+    "utils.py",
+    "requirements.txt",
+    "README.md",
+    ".env.example"
+  ],
+  "dependencies": {
+    "python": ">=3.8",
+    "packages": [
+      "aiohttp>=3.9.0",
+      "python-dotenv>=1.0.0"
+    ]
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "inoreader_list_feeds",
+        "description": "List all subscribed RSS feeds in your Inoreader account"
+      },
+      {
+        "name": "inoreader_list_articles",
+        "description": "List recent articles with filters (unread, by date, by feed)"
+      },
+      {
+        "name": "inoreader_search",
+        "description": "Search articles by keyword across all your feeds"
+      },
+      {
+        "name": "inoreader_get_content",
+        "description": "Read full content of specific articles"
+      },
+      {
+        "name": "inoreader_mark_as_read",
+        "description": "Mark articles as read individually or in bulk"
+      },
+      {
+        "name": "inoreader_summarize",
+        "description": "Generate AI summaries of articles"
+      },
+      {
+        "name": "inoreader_analyze",
+        "description": "Analyze multiple articles for trends, sentiment, and keywords"
+      },
+      {
+        "name": "inoreader_stats",
+        "description": "View statistics about unread articles"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "prompt": "List my unread articles from the last 3 days",
+      "description": "Shows recent unread articles filtered by date"
+    },
+    {
+      "prompt": "Search for articles about artificial intelligence",
+      "description": "Searches across all feeds for AI-related content"
+    },
+    {
+      "prompt": "Summarize the top 5 tech articles this week",
+      "description": "Creates AI-powered summaries of recent tech articles"
+    },
+    {
+      "prompt": "What's the sentiment of economy articles today?",
+      "description": "Analyzes sentiment across economy-related articles"
+    }
+  ],
+  "metadata": {
+    "homepage": "https://github.com/your-username/inoreader_mcp",
+    "issues": "https://github.com/your-username/inoreader_mcp/issues",
+    "repository": "https://github.com/your-username/inoreader_mcp"
+  }
+}
